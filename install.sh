@@ -13,20 +13,18 @@ $0 OPTIONS...
 
 Valid options are:
 
--v Guix version to use (default 0.12.0).
+-v VERSION
+Guix version to use (default 0.12.0).
 
 -s SYSARCH
 Guix architecture and host system to use (default x86_64-linux).
+Valid values are: armhf-linux, mips64el-linux, i686-linux, x86_64-linux.
 
-Valid architectures are:
-armhf-linux
-i686-linux
-mips64el-linux
-x86_64-linux
+-k URL
+keyserver URL to use for importing PGP keys (default gpg.mit.edu).
 
--k keyserver to use for importing PGP keys (default gpg.mit.edu)
-
--i key id to use to fetch public PGP key
+-i KEYID
+Key id to use to fetch public PGP key (default ending 235FACAC).
 
 -t PATH
 Use PATH for downloaded temporary files (default /tmp/guix).
