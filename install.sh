@@ -15,8 +15,8 @@ Valid options are:
 
 -v Guix version to use (default 0.12.0).
 
--a SYSARCH
-Guix system architecture to use (default x86_64-linux).
+-s SYSARCH
+Guix architecture and host system to use (default x86_64-linux).
 
 Valid architectures are:
 armhf-linux
@@ -28,18 +28,13 @@ x86_64-linux
 
 -i key id to use to fetch public PGP key
 
--r PATH
-Use PATH as root directory to set up Guix under (default /tmp/root).
-
 -t PATH
-Use PATH to use for temporary files (default /tmp/guix).
+Use PATH for downloaded temporary files (default /tmp/guix).
 
--f
-Flag to force overwrite existing Guix directories.
 EOF
 }
        
-while getopts ':v:s:k:i:r:tfh' opt;
+while getopts ':v:s:k:i:th' opt;
 do
     case $opt in
 	v)
@@ -56,12 +51,6 @@ do
 	    ;;
 	t)
 	    TMP_DIR=$OPTARG
-	    ;;
-	r)
-	    ROOT_DIR=$OPTARG
-	    ;;
-	f)
-	    FORCE='true'
 	    ;;
 	h)
 	    usage
@@ -82,12 +71,11 @@ do
     esac
 done
 
-TMP_DIR=${TMP_DIR:-/tmp/guix}
-ROOT_DIR=${ROOT_DIR:-/tmp/root}
 VERSION=${VERSION:-0.12.0}
 SYSTEM=${SYSTEM:-x86_64-linux}
 KEYSERVER=${KEYSERVER:-pgp.mit.edu}
 KEYID=${KEYID:-BCA689B636553801C3C62150197A5888235FACAC}
+TMP_DIR=${TMP_DIR:-/tmp/guix}
 
 if [[ ! -d $TMP_DIR ]]
 then
@@ -98,22 +86,28 @@ cd $TMP_DIR
 
 filename="guix-binary-$VERSION.$SYSTEM.tar.xz"
 
-if [[ ! -f $filename ]];
+if [[ ! -f $filename ]]
 then
     wget ftp://alpha.gnu.org/gnu/guix/$filename
-    wget ftp://alpha.gnu.org/gnu/guix/$filename.sig
-    gpg --keyserver $KEYSERVER --recv-keys $KEYID
-    gpg --verify $filename.sig
 fi
 
+if [[ ! -f $filename.sig ]]
+then
+    wget ftp://alpha.gnu.org/gnu/guix/$filename.sig
+fi
 
-tar --warning=no-timestamp -xf $filename
-mv var/guix $ROOT_DIR/var
-mv gnu $ROOT_DIR
+if ! gpg --list-keys $KEYID
+then
+    echo Fetching PGP key...
+    gpg --keyserver $KEYSERVER --recv-keys $KEYID
+fi
 
-#ln -sf /var/guix/profiles/per-user/root/guix-profile ~root/.guix-profile
-#ln -s ~/root/.guix-profile/lib/systemd/system/guix-daemon.service /etc/systemd/systemd
+echo "Verifying signature..."
+if gpg --verify $filename.sig
+then
+    echo "Signature VERIFIED!"
+else
+    echo "Signature CANNOT BE VERIFIED!"
+    exit -1
+fi
 
-
-
-# rm -rf $TMP_DIR
