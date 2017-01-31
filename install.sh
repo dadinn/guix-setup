@@ -3,9 +3,11 @@
 # TODO check if these commands are available:
 # gpg wget tar (with xz-utils)
 
+source ./default.sh
+
 function usage {
     cat <<EOF
-Set up the GNU Guix package manager
+Set up the GNU Guix package manager on an existing Linux host system.
 
 USAGE:
 
@@ -15,24 +17,19 @@ Valid options are:
 
 -v VERSION
 Guix version to use (default 0.12.0).
-
 -s SYSARCH
 Guix architecture and host system to use (default x86_64-linux).
 Valid values are: armhf-linux, mips64el-linux, i686-linux, x86_64-linux.
-
--k URL
+-u URL
 keyserver URL to use for importing PGP keys (default gpg.mit.edu).
-
--i KEYID
+-k KEYID
 Key id to use to fetch public PGP key (default ending 235FACAC).
-
 -t PATH
 Use PATH for downloaded temporary files (default /tmp/guix).
-
 EOF
 }
        
-while getopts ':v:s:k:i:th' opt;
+while getopts ':v:s:u:k:th' opt;
 do
     case $opt in
 	v)
@@ -41,10 +38,10 @@ do
 	s)
 	    SYSTEM=$OPTARG
 	    ;;
-	k)
+	u)
 	    KEYSERVER=$OPTARG
 	    ;;
-	i)
+	k)
 	    KEYID=$OPTARG
 	    ;;
 	t)
@@ -68,12 +65,6 @@ do
 	    ;;
     esac
 done
-
-VERSION=${VERSION:-0.12.0}
-SYSTEM=${SYSTEM:-x86_64-linux}
-KEYSERVER=${KEYSERVER:-pgp.mit.edu}
-KEYID=${KEYID:-BCA689B636553801C3C62150197A5888235FACAC}
-TMP_DIR=${TMP_DIR:-/tmp/guix}
 
 if [[ ! -d $TMP_DIR ]]
 then
