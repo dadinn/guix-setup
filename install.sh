@@ -24,12 +24,19 @@ Valid values are: armhf-linux, mips64el-linux, i686-linux, x86_64-linux.
 keyserver URL to use for importing PGP keys (default gpg.mit.edu).
 -k KEYID
 Key id to use to fetch public PGP key (default ending 235FACAC).
+-n NUMBER
+Number of Guix build users to create (default 10).
+-i TYPE
+Init system to set up guix-daemon for (default systemd).
+Valid values are: systemd, upstart, manual.
+-f
+Flag to force overwriting existing Guix installation.
 -t PATH
 Use PATH for downloaded temporary files (default /tmp/guix).
 EOF
 }
        
-while getopts ':v:s:u:k:th' opt;
+while getopts ':v:s:u:k:n:i:tfh' opt;
 do
     case $opt in
 	v)
@@ -44,8 +51,17 @@ do
 	k)
 	    KEYID=$OPTARG
 	    ;;
+	n)
+	    BUSERS=$OPTARG
+	    ;;
+	i)
+	    INIT=$OPTARG
+	    ;;
 	t)
 	    TMP_DIR=$OPTARG
+	    ;;
+	f)
+	    FORCE=1
 	    ;;
 	h)
 	    usage
@@ -65,6 +81,8 @@ do
 	    ;;
     esac
 done
+
+### DOWNLOADING GUIX BINARIES
 
 if [[ ! -d $TMP_DIR ]]
 then
@@ -100,3 +118,83 @@ else
     exit -1
 fi
 
+### SETTING UP GUIX
+
+if [ ! -d $TMP_DIR/var/guix ] && [ ! -d $TMP_DIR/gnu ]
+then
+    echo "Extracting Guix binaries..."
+    tar --warning=no-timestamp -xf $filename
+fi
+
+if [ -d /var/guix ]
+then
+    if [ $FORCE = 1 ]
+    then
+	rm -rf /var/guix
+    else
+	echo "ERROR: /var/guix directory already exists! Use -f flag to force overwriting it!"
+	exit -1
+    fi
+fi
+
+if [ -d /gnu ]
+then
+    if [ $FORCE = 1 ]
+    then
+	rm -rf /gnu
+    else
+	echo "ERROR: /gnu directory already exists! Use -f flag to force overwriting it!"
+	exit -1
+    fi
+fi
+
+echo "Installing binaries under /gnu and /var/guix ..."
+mv var/guix /var
+mv gnu /
+
+echo "Cleaning up temporary files..."
+rm -rf $TMP_DIR
+
+### GUIX CONFIGURATION
+
+root_profile=/var/guix/profiles/per-user/root/guix-profile
+
+echo "Adding info pages..."
+if [ -d /usr/local/share/info ]
+then
+    ln -s $root_profile/share/info/* /usr/local/share/info/
+else
+    ln -s $root_profile/share/info /usr/local/share/
+fi
+
+echo "Configuring PATH for root user"
+ln -sTf $root_profile /root/.guix-profile
+echo 'PATH=$PATH:$HOME/.guix-profile/bin' >> /root/.profile
+
+echo "Setting up build group and users"
+groupadd --system guixbuild
+for i in $(seq -w 1 $BUSERS)
+do
+    useradd --system -G guixbuild -s $(which nologin) -c "Guix build user $i" "guixbuilder$i"
+done
+
+echo "Setting up guix-daemon"
+case $INIT in
+    systemd)
+	echo "Setting up Systemd service..."
+	ln -s /root/.guix-profile/lib/systemd/system/guix-daemon.service /etc/systemd/systemd
+	systemctl start guix-daemon && systemctl enable guix-daemon
+	;;
+    upstart)
+	echo "Setting up Upstart service..."
+	ln -s /root/.guix-profile/lib/upstart/system/guix.daemon.conf /etc/init/
+	start guix-daemon
+	;;
+    manual)
+	echo "Starting guix-daemon in background process"
+	guix-daemon --build-users-group guixbuild &
+esac
+
+echo "Authorizing substitutes from hydra.gnu.org..."
+source ~/.profile
+guix archive --authorize $root_profile/share/guix/hydra.gnu.org.pub
