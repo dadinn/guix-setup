@@ -28,7 +28,7 @@ echo "Setting up guix-daemon"
 case $INIT in
     systemd)
 	echo "Setting up Systemd service..."
-	ln -s /root/.guix-profile/lib/systemd/system/guix-daemon.service /etc/systemd/systemd
+	ln -s /root/.guix-profile/lib/systemd/system/guix-daemon.service /etc/systemd/system
 	systemctl start guix-daemon && systemctl enable guix-daemon
 	;;
     upstart)
