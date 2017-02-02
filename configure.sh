@@ -45,3 +45,5 @@ esac
 echo "Authorizing substitutes from hydra.gnu.org..."
 source ~/.profile
 guix archive --authorize $root_profile/share/guix/hydra.gnu.org.pub
+echo "Installing glibc locales..."
+guix package -i glibc-utf8-locales && export GUIX_LOCPATH=~/.guix-profile/lib/locale
