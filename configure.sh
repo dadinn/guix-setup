@@ -1,6 +1,7 @@
 #!/bin/bash
 
 source default.sh
+
 ### GUIX CONFIGURATION
 
 root_profile=/var/guix/profiles/per-user/root/guix-profile
