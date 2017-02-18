@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function sources-backports {
-    echo "deb http://ftp.debian.org/debian jessie-backports main contrib" > /etc/apt/sources.list.d/backports.list
+    echo "deb http://ftp.uk.debian.org/debian jessie-backports main contrib" > /etc/apt/sources.list.d/backports.list
     apt update
 }
 
@@ -57,6 +57,7 @@ function install-docker {
     case $docker in
 	[yY])
 	    echo "Installing Docker Engine..."
+	    sources-docker
 	    apt install -y docker-engine
 	    ;;
 	*)
@@ -69,6 +70,4 @@ sources-backports
 install-grsec
 install-zfs
 install-kvm
-
-sources-docker
 install-docker
