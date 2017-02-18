@@ -7,16 +7,27 @@ source guix-defaults.sh
 root_profile=/var/guix/profiles/per-user/root/guix-profile
 
 echo "Adding info pages..."
-if [ -d /usr/local/share/info ]
+
+if [ ! -d /usr/local/share/info ]
 then
-    ln -s $root_profile/share/info/* /usr/local/share/info/
-else
-    ln -s $root_profile/share/info /usr/local/share/
+    mkdir /usr/local/share/info
 fi
+
+for i in $root_profile/share/info/*
+do
+    if [ ! -L /usr/local/share/info/$(basename $i) ]
+    then
+	ln -s $i /usr/local/share/info/
+    fi
+done
 
 echo "Configuring PATH for root user"
 ln -sTf $root_profile /root/.guix-profile
 echo 'PATH=$PATH:$HOME/.guix-profile/bin' >> /root/.profile
+
+echo "Configuring PATH in profile for all users"
+echo 'PATH=$PATH:$HOME/.guix-profile/bin' > /etc/profile.d/guix.sh
+echo 'export PATH' >> /etc/profile.d/guix.sh
 
 echo "Setting up build group and users"
 groupadd --system guixbuild
