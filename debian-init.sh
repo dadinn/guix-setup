@@ -32,6 +32,20 @@ function install-grsec {
     esac
 }
 
+function debian-upgrade {
+    read -p "Upgrade Debian? [y/N]" getlatest
+    case $getlatest in
+	[yY])
+	    "Upgrading Debian install..."
+	    apt update
+	    apt upgrade -y
+	    ;;
+	*)
+	    echo "Skipping upgrading Debian install"
+	    ;;
+    esac
+}
+
 function install-zfs {
     read -p "Install ZFS tools & kernel modules? [y/N]" zfs
     case $zfs in
@@ -76,8 +90,7 @@ function install-docker {
     esac
 }
 
-apt update
-apt upgrade -y
+debian-upgrade
 install-grsec
 install-zfs
 install-kvm
