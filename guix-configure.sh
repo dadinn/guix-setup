@@ -29,12 +29,20 @@ echo "Setting up guix-daemon"
 case $INIT in
     systemd)
 	echo "Setting up Systemd service..."
-	ln -s /root/.guix-profile/lib/systemd/system/guix-daemon.service /etc/systemd/system
+	if [ -f /etc/systemd/system/guix-daemon.service ]
+	then
+	    rm /etc/systemd/system/guix-daemon.service
+	fi
+	ln -s /root/.guix-profile/lib/systemd/system/guix-daemon.service /etc/systemd/system/
 	systemctl start guix-daemon && systemctl enable guix-daemon
 	;;
     upstart)
 	echo "Setting up Upstart service..."
-	ln -s /root/.guix-profile/lib/upstart/system/guix.daemon.conf /etc/init/
+	if [ -f /etc/init/guix-daemon.conf ]
+	then
+	    rm /etc/init/guix-daemon.conf
+	fi
+	ln -s /root/.guix-profile/lib/upstart/system/guix-daemon.conf /etc/init/
 	start guix-daemon
 	;;
     manual)
