@@ -1,15 +1,21 @@
 #!/bin/bash
 
 function sources-backports {
-    echo "deb http://ftp.uk.debian.org/debian jessie-backports main contrib" > /etc/apt/sources.list.d/backports.list
-    apt update
+    if [ ! -f /etc/apt/sources.list.d/backports.list ]
+    then
+	echo "deb http://ftp.uk.debian.org/debian jessie-backports main contrib" > /etc/apt/sources.list.d/backports.list
+	apt update
+    fi
 }
 
 function sources-docker {
-    echo "deb https://apt.dockerproject.org/repo debian-jessie main" > /etc/apt/sources.list.d/docker.list
-    wget -O - "https://apt.dockerproject.org/gpg" | apt-key add -
-    apt install -y apt-transport-https
-    apt update
+    if [ ! -f /etc/apt/sources.list.d/docker.list ]
+    then
+	apt install -y apt-transport-https
+	echo "deb https://apt.dockerproject.org/repo debian-jessie main" > /etc/apt/sources.list.d/docker.list
+	wget -O - "https://apt.dockerproject.org/gpg" | apt-key add -
+	apt update
+    fi
 }
 
 function install-grsec {
@@ -17,6 +23,7 @@ function install-grsec {
     case $grsec in
 	[yY])
 	    echo "Installing grsecurity kernel patches..."
+	    sources-backports
 	    apt install -y -t jessie-backports linux-image-grsec-amd64
 	    ;;
 	*)
@@ -30,11 +37,13 @@ function install-zfs {
     case $zfs in
 	[yY])
 	    echo "Installing ZFS tools & kernel modules..."
+	    sources-backports
 	    apt install -y -t jessie-backports linux-headers-$(uname -r)
+	    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
+	    apt install -y nfs-kernel-server samba
 	    ;;
 	*)
 	    echo "Skipping ZFS tools & kernel modules"
-	    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
 	    ;;
     esac
 }
@@ -45,6 +54,7 @@ function install-kvm {
 	[yY])
 	    echo "Installing KVM packages..."
 	    apt install -y qemu-kvm libvirt-bin virtinst
+	    echo "Check that virtualization support is enabled in BIOS!"
 	    ;;
 	*)
 	    echo "Skipping KVM packages"
@@ -66,7 +76,8 @@ function install-docker {
     esac
 }
 
-sources-backports
+apt update
+apt upgrade -y
 install-grsec
 install-zfs
 install-kvm
