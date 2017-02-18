@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source default.sh
+source guix-defaults.sh
 
 ### GUIX CONFIGURATION
 
