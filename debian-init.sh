@@ -13,23 +13,56 @@ function sources-docker {
 }
 
 function install-grsec {
-    #Switch to Grsec kernel
-    apt install -y -t jessie-backports linux-image-grsec-amd64
+    read -p "Install grsecurity kernel patches? [y/N]" grsec
+    case $grsec in
+	[yY])
+	    echo "Installing grsecurity kernel patches..."
+	    apt install -y -t jessie-backports linux-image-grsec-amd64
+	    ;;
+	*)
+	    echo "Skipping grsecurity kernel patches"
+	    ;;
+    esac
 }
 
 function install-zfs {
-    #ZFS
-    apt install -y -t jessie-backports linux-headers-$(uname -r)
-    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
+    read -p "Install ZFS tools & kernel modules? [y/N]" zfs
+    case $zfs in
+	[yY])
+	    echo "Installing ZFS tools & kernel modules..."
+	    apt install -y -t jessie-backports linux-headers-$(uname -r)
+	    ;;
+	*)
+	    echo "Skipping ZFS tools & kernel modules"
+	    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
+	    ;;
+    esac
 }
 
 function install-kvm {
-    #KVM
-    apt install -y qemu-kvm libvirt-bin virtinst
+    read -p "Install KVM packages? [y/N]" kvm
+    case $kvm in
+	[yY])
+	    echo "Installing KVM packages..."
+	    apt install -y qemu-kvm libvirt-bin virtinst
+	    ;;
+	*)
+	    echo "Skipping KVM packages"
+	    ;;
+    esac
 }
 
 function install-docker {
-    apt install -y docker-engine
+    read -p "Install Docker Engine? [y/N]" docker
+    case $docker in
+	[yY])
+	    echo "Installing Docker Engine..."
+	    apt install -y docker-engine
+	    ;;
+	*)
+	    echo "Skipping Docker Engine"
+	    ;;
+    esac
 }
 
 sources-backports
