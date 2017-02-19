@@ -90,8 +90,22 @@ function install-docker {
     esac
 }
 
+function install-extra {
+    read -p "Install extra packages? [y/N]" extra
+    case $extra in
+	[yY])
+	    echo "Installing extra packages..."
+	    apt install -y xz-utils
+	    ;;
+	*)
+	    echo "Skipping extra packages"
+	    ;;
+    esac
+}
+
 debian-upgrade
 install-grsec
 install-zfs
 install-kvm
 install-docker
+install-extra
