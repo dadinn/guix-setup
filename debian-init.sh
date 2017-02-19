@@ -22,7 +22,7 @@ function debian-upgrade {
     read -p "Upgrade Debian? [y/N]" getlatest
     case $getlatest in
 	[yY])
-	    "Upgrading Debian install..."
+	    echo "Upgrading Debian install..."
 	    apt update
 	    apt upgrade -y
 	    ;;
