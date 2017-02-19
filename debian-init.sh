@@ -18,20 +18,6 @@ function sources-docker {
     fi
 }
 
-function install-grsec {
-    read -p "Install grsecurity kernel patches? [y/N]" grsec
-    case $grsec in
-	[yY])
-	    echo "Installing grsecurity kernel patches..."
-	    sources-backports
-	    apt install -y -t jessie-backports linux-image-grsec-amd64
-	    ;;
-	*)
-	    echo "Skipping grsecurity kernel patches"
-	    ;;
-    esac
-}
-
 function debian-upgrade {
     read -p "Upgrade Debian? [y/N]" getlatest
     case $getlatest in
@@ -42,6 +28,20 @@ function debian-upgrade {
 	    ;;
 	*)
 	    echo "Skipping upgrading Debian install"
+	    ;;
+    esac
+}
+
+function install-grsec {
+    read -p "Install grsecurity kernel patches? [y/N]" grsec
+    case $grsec in
+	[yY])
+	    echo "Installing grsecurity kernel patches..."
+	    sources-backports
+	    apt install -y -t jessie-backports linux-image-grsec-amd64
+	    ;;
+	*)
+	    echo "Skipping grsecurity kernel patches"
 	    ;;
     esac
 }
