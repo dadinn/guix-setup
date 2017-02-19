@@ -36,7 +36,7 @@ Use PATH for downloaded temporary files (default /tmp/guix).
 EOF
 }
        
-while getopts ':v:s:u:k:n:i:tfh' opt;
+while getopts ':v:s:u:k:n:i:th' opt
 do
     case $opt in
 	v)
@@ -59,9 +59,6 @@ do
 	    ;;
 	t)
 	    TMP_DIR=$OPTARG
-	    ;;
-	f)
-	    FORCE=1
 	    ;;
 	h)
 	    usage
@@ -126,31 +123,21 @@ then
     tar --warning=no-timestamp -xf $filename
 fi
 
-if [ -d /var/guix ]
+echo "Installing binaries under /gnu and /var/guix ..."
+
+if [ -d /var ]
 then
-    if [ $FORCE = 1 ]
-    then
-	rm -rf /var/guix
-    else
-	echo "ERROR: /var/guix directory already exists! Use -f flag to force overwriting it!"
-	exit -1
-    fi
+    mv var/* /var
+else
+    mv var /
 fi
 
 if [ -d /gnu ]
 then
-    if [ $FORCE = 1 ]
-    then
-	rm -rf /gnu
-    else
-	echo "ERROR: /gnu directory already exists! Use -f flag to force overwriting it!"
-	exit -1
-    fi
+    mv gnu/* /gnu
+else
+    mv gnu /
 fi
-
-echo "Installing binaries under /gnu and /var/guix ..."
-mv var/guix /var
-mv gnu /
 
 echo "Cleaning up temporary files..."
 rm -rf $TMP_DIR
