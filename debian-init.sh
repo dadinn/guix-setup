@@ -18,9 +18,9 @@ function sources-docker {
     fi
 }
 
-function debian-upgrade {
-    read -p "Upgrade Debian? [y/N]" getlatest
-    case $getlatest in
+function system-upgrade {
+    read -p "Upgrade the system? [y/N]" system_upgrade
+    case $system_upgrade in
 	[yY])
 	    echo "Upgrading Debian install..."
 	    apt update
@@ -32,6 +32,25 @@ function debian-upgrade {
     esac
 }
 
+function system-reboot {
+    read -p "Reboot now? [Y/n]" system_reboot
+    case $system_reboot in
+	[nN])
+	    echo "Skipping reboot"
+	    ;;
+	*)
+	    echo "Rebooting..."
+	    reboot
+	    ;;
+    esac
+}
+
+function system-cleanup {
+    apt-get autoremove -y
+    apt-get autoclean -y
+    system-reboot
+}
+
 function install-grsec {
     read -p "Install grsecurity kernel patches? [y/N]" grsec
     case $grsec in
@@ -39,6 +58,8 @@ function install-grsec {
 	    echo "Installing grsecurity kernel patches..."
 	    sources-backports
 	    apt install -y -t jessie-backports linux-image-grsec-amd64
+	    echo "Finished installing grsecurity patched kernel!"
+	    system-reboot
 	    ;;
 	*)
 	    echo "Skipping grsecurity kernel patches"
@@ -55,6 +76,8 @@ function install-zfs {
 	    apt install -y -t jessie-backports linux-headers-$(uname -r)
 	    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
 	    apt install -y nfs-kernel-server samba
+	    echo "Finnished installing ZFS tools & kernel modules!"
+	    system-reboot
 	    ;;
 	*)
 	    echo "Skipping ZFS tools & kernel modules"
@@ -103,9 +126,10 @@ function install-extra {
     esac
 }
 
-debian-upgrade
+system-upgrade
 install-grsec
 install-zfs
 install-kvm
 install-docker
 install-extra
+system-cleanup
