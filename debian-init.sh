@@ -50,6 +50,7 @@ function system-reboot {
 function system-cleanup {
     apt-get autoremove -y
     apt-get autoclean -y
+    system-reboot
 }
 
 function install-grsec {
@@ -60,7 +61,8 @@ function install-grsec {
 	    sources-backports
 	    apt install -y -t jessie-backports linux-image-grsec-amd64
 	    echo "Finished installing grsecurity patched kernel!"
-	    echo 'INSTALL_GSREC=1' >> debian-stage.sh
+	    echo 'INSTALL_GRSEC=1' >> debian-stage.sh
+	    system-reboot
 	    ;;
 	*)
 	    echo "Skipping grsecurity kernel patches"
@@ -79,6 +81,7 @@ function install-zfs {
 	    apt install -y nfs-kernel-server samba
 	    echo "Finished installing ZFS tools & kernel modules!"
 	    echo 'INSTALL_ZFS=1' >> debian-stage.sh
+	    system-reboot
 	    ;;
 	*)
 	    echo "Skipping ZFS tools & kernel modules"
@@ -148,13 +151,11 @@ fi
 if [[ $INSTALL_GRSEC -lt 1 ]]
 then
     install-grsec
-    system-reboot
 fi
 
 if [[ $INSTALL_ZFS -lt 1 ]]
 then
     install-zfs
-    system-reboot
 fi
 
 if [[ $INSTALL_KVM -lt 1 ]]
@@ -173,4 +174,3 @@ then
 fi
 
 system-cleanup
-system-reboot
