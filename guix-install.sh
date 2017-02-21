@@ -125,18 +125,33 @@ echo "Installing binaries under /gnu and /var/guix ..."
 
 if [ -d /var ]
 then
-    mv var/* /var
+    for i in var/*
+    do
+	mv $i /var
+    done
 else
     mv var /
 fi
 
 if [ -d /gnu ]
 then
-    mv gnu/* /gnu
+    for i in gnu/*
+    do
+	mv $i /gnu
+    done
 else
     mv gnu /
 fi
 
-echo "Cleaning up temporary files..."
-rm -rf $TMP_DIR
+read -p "Clean up temporary files? [Y/n]" cleanup
+case $cleanup in
+    [nN])
+	"Skipped cleaning up temporary files"
+	;;
+    *)
+	echo "Cleaning up temporary files..."
+	rm -rf $TMP_DIR
+	;;
+esac
+
 
