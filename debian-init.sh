@@ -26,7 +26,7 @@ function system-upgrade {
 	    apt update
 	    apt upgrade -y
 	    echo "Finished upgrading Debian system!"
-	    echo 'SYSTEM_UPGRADE=1' >> debian-stage.sh
+	    echo 'SYSTEM_UPGRADE=1' >> debian-state
 	    ;;
 	*)
 	    echo "Skipping upgrading Debian system"
@@ -61,7 +61,7 @@ function install-grsec {
 	    sources-backports
 	    apt install -y -t jessie-backports linux-image-grsec-amd64
 	    echo "Finished installing grsecurity patched kernel!"
-	    echo 'INSTALL_GRSEC=1' >> debian-stage.sh
+	    echo 'INSTALL_GRSEC=1' >> debian-state
 	    system-reboot
 	    ;;
 	*)
@@ -80,7 +80,7 @@ function install-zfs {
 	    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
 	    apt install -y nfs-kernel-server samba
 	    echo "Finished installing ZFS tools & kernel modules!"
-	    echo 'INSTALL_ZFS=1' >> debian-stage.sh
+	    echo 'INSTALL_ZFS=1' >> debian-state
 	    system-reboot
 	    ;;
 	*)
@@ -96,7 +96,7 @@ function install-kvm {
 	    echo "Installing KVM..."
 	    apt install -y qemu-kvm libvirt-bin virtinst
 	    echo "Finished installing KVM!"
-	    echo 'INSTALL_KVM=1' >> debian-stage.sh
+	    echo 'INSTALL_KVM=1' >> debian-state
 	    echo "Check that virtualization support is enabled in BIOS!"
 	    ;;
 	*)
@@ -113,7 +113,7 @@ function install-docker {
 	    sources-docker
 	    apt install -y docker-engine
 	    echo "Finished installing Docker!"
-	    echo 'INSTALL_DOCKER=1' >> debian-stage.sh
+	    echo 'INSTALL_DOCKER=1' >> debian-state
 	    ;;
 	*)
 	    echo "Skipping Docker Engine"
@@ -128,7 +128,7 @@ function install-extra {
 	    echo "Installing extra packages..."
 	    apt install -y xz-utils
 	    echo "Finished installing extra packages!"
-	    echo 'INSTALL_EXTRA=1' >> debian-stage.sh
+	    echo 'INSTALL_EXTRA=1' >> debian-state
 	    ;;
 	*)
 	    echo "Skipping extra packages"
@@ -136,11 +136,11 @@ function install-extra {
     esac
 }
 
-if [ -f debian-stage.sh ]
+if [ -f debian-state ]
 then
-    source debian-stage.sh
+    source debian-state
 else
-    echo '#!/bin/bash' > debian-stage.sh
+    echo '#!/bin/bash' > debian-state
 fi
 
 if [[ $SYSTEM_UPGRADE -lt 1 ]]
