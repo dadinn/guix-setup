@@ -22,12 +22,12 @@ function system-upgrade {
     read -p "Upgrade the system? [y/N]" system_upgrade
     case $system_upgrade in
 	[yY])
-	    echo "Upgrading Debian install..."
+	    echo "Upgrading Debian system..."
 	    apt update
 	    apt upgrade -y
 	    ;;
 	*)
-	    echo "Skipping upgrading Debian install"
+	    echo "Skipping upgrading Debian system"
 	    ;;
     esac
 }
@@ -86,11 +86,12 @@ function install-zfs {
 }
 
 function install-kvm {
-    read -p "Install KVM packages? [y/N]" kvm
+    read -p "Install KVM? [y/N]" kvm
     case $kvm in
 	[yY])
-	    echo "Installing KVM packages..."
+	    echo "Installing KVM..."
 	    apt install -y qemu-kvm libvirt-bin virtinst
+	    echo "Finished installing KVM!"
 	    echo "Check that virtualization support is enabled in BIOS!"
 	    ;;
 	*)
@@ -100,10 +101,10 @@ function install-kvm {
 }
 
 function install-docker {
-    read -p "Install Docker Engine? [y/N]" docker
+    read -p "Install Docker? [y/N]" docker
     case $docker in
 	[yY])
-	    echo "Installing Docker Engine..."
+	    echo "Installing Docker..."
 	    sources-docker
 	    apt install -y docker-engine
 	    ;;
