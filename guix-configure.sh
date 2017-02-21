@@ -21,25 +21,24 @@ do
     fi
 done
 
-echo "Configuring PATH for root user"
+echo "Configuring PATH for root user..."
 ln -sTf $root_profile /root/.guix-profile
-echo 'PATH=$PATH:$HOME/.guix-profile/bin' >> /root/.profile
 
-echo "Configuring PATH in profile for all users"
+echo "Configuring PATH for all user profiles..."
 echo 'PATH=$PATH:$HOME/.guix-profile/bin' > /etc/profile.d/guix.sh
 echo 'export PATH' >> /etc/profile.d/guix.sh
 
-echo "Setting up build group and users"
+echo "Setting up build group and users..."
 groupadd --system guixbuild
 for i in $(seq -w 1 $BUSERS)
 do
     useradd --system -G guixbuild -s $(which nologin) -c "Guix build user $i" "guixbuilder$i"
 done
 
-echo "Setting up guix-daemon"
+echo "Setting up guix-daemon..."
 case $INIT in
     systemd)
-	echo "Setting up Systemd service..."
+	echo "Setting up systemd service..."
 	if [ -f /etc/systemd/system/guix-daemon.service ]
 	then
 	    rm /etc/systemd/system/guix-daemon.service
@@ -48,7 +47,7 @@ case $INIT in
 	systemctl start guix-daemon && systemctl enable guix-daemon
 	;;
     upstart)
-	echo "Setting up Upstart service..."
+	echo "Setting up upstart service..."
 	if [ -f /etc/init/guix-daemon.conf ]
 	then
 	    rm /etc/init/guix-daemon.conf
