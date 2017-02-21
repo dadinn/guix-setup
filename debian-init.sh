@@ -70,6 +70,21 @@ function install-grsec {
     esac
 }
 
+function install-samba {
+    read -p "Install NFS / Samba packages? [y/N]" install_samba
+    case $install_samba in
+	[yY])
+	    echo "Installing NFS / Samba packages..."
+	    apt install -y nfs-kernel-server samba
+	    echo "Finished installing NFS / Samba packages"
+	    echo 'INSTALL_SAMBA=1' >> debian-state
+	    ;;
+	*)
+	    echo "Skipping NFS / Samba packages"
+	    ;;
+    esac
+}
+
 function install-zfs {
     read -p "Install ZFS tools & kernel modules? [y/N]" zfs
     case $zfs in
@@ -78,7 +93,6 @@ function install-zfs {
 	    sources-backports
 	    apt install -y -t jessie-backports linux-headers-$(uname -r)
 	    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
-	    apt install -y nfs-kernel-server samba
 	    echo "Finished installing ZFS tools & kernel modules!"
 	    echo 'INSTALL_ZFS=1' >> debian-state
 	    system-reboot
@@ -156,6 +170,11 @@ fi
 if [[ $INSTALL_ZFS -lt 1 ]]
 then
     install-zfs
+fi
+
+if [[ $INSTALL_SAMBA -lt 1 ]]
+then
+    install-samba
 fi
 
 if [[ $INSTALL_KVM -lt 1 ]]
