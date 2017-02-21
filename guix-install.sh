@@ -29,8 +29,6 @@ Number of Guix build users to create (default 10).
 -i TYPE
 Init system to set up guix-daemon for (default systemd).
 Valid values are: systemd, upstart, manual.
--f
-Flag to force overwriting existing Guix installation.
 -t PATH
 Use PATH for downloaded temporary files (default /tmp/guix).
 EOF
