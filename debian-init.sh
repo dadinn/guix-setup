@@ -25,6 +25,8 @@ function system-upgrade {
 	    echo "Upgrading Debian system..."
 	    apt update
 	    apt upgrade -y
+	    echo "Finished upgrading Debian system!"
+	    echo 'SYSTEM_UPGRADE=1' >> debian-stage.sh
 	    ;;
 	*)
 	    echo "Skipping upgrading Debian system"
@@ -48,7 +50,6 @@ function system-reboot {
 function system-cleanup {
     apt-get autoremove -y
     apt-get autoclean -y
-    system-reboot
 }
 
 function install-grsec {
@@ -59,7 +60,7 @@ function install-grsec {
 	    sources-backports
 	    apt install -y -t jessie-backports linux-image-grsec-amd64
 	    echo "Finished installing grsecurity patched kernel!"
-	    system-reboot
+	    echo 'INSTALL_GSREC=1' >> debian-stage.sh
 	    ;;
 	*)
 	    echo "Skipping grsecurity kernel patches"
@@ -76,8 +77,8 @@ function install-zfs {
 	    apt install -y -t jessie-backports linux-headers-$(uname -r)
 	    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
 	    apt install -y nfs-kernel-server samba
-	    echo "Finnished installing ZFS tools & kernel modules!"
-	    system-reboot
+	    echo "Finished installing ZFS tools & kernel modules!"
+	    echo 'INSTALL_ZFS=1' >> debian-stage.sh
 	    ;;
 	*)
 	    echo "Skipping ZFS tools & kernel modules"
@@ -92,6 +93,7 @@ function install-kvm {
 	    echo "Installing KVM..."
 	    apt install -y qemu-kvm libvirt-bin virtinst
 	    echo "Finished installing KVM!"
+	    echo 'INSTALL_KVM=1' >> debian-stage.sh
 	    echo "Check that virtualization support is enabled in BIOS!"
 	    ;;
 	*)
@@ -107,6 +109,8 @@ function install-docker {
 	    echo "Installing Docker..."
 	    sources-docker
 	    apt install -y docker-engine
+	    echo "Finished installing Docker!"
+	    echo 'INSTALL_DOCKER=1' >> debian-stage.sh
 	    ;;
 	*)
 	    echo "Skipping Docker Engine"
@@ -120,6 +124,8 @@ function install-extra {
 	[yY])
 	    echo "Installing extra packages..."
 	    apt install -y xz-utils
+	    echo "Finished installing extra packages!"
+	    echo 'INSTALL_EXTRA=1' >> debian-stage.sh
 	    ;;
 	*)
 	    echo "Skipping extra packages"
@@ -127,10 +133,44 @@ function install-extra {
     esac
 }
 
-system-upgrade
-install-grsec
-install-zfs
-install-kvm
-install-docker
-install-extra
+if [ -f debian-stage.sh ]
+then
+    source debian-stage.sh
+else
+    echo '#!/bin/bash' > debian-stage.sh
+fi
+
+if [[ $SYSTEM_UPGRADE -lt 1 ]]
+then
+    system-upgrade
+fi
+
+if [[ $INSTALL_GRSEC -lt 1 ]]
+then
+    install-grsec
+    system-reboot
+fi
+
+if [[ $INSTALL_ZFS -lt 1 ]]
+then
+    install-zfs
+    system-reboot
+fi
+
+if [[ $INSTALL_KVM -lt 1 ]]
+then
+    install-kvm
+fi
+
+if [[ $INSTALL_DOCKER -lt 1 ]]
+then
+    install-docker
+fi
+
+if [[ $INSTALL_EXTRA -lt 1 ]]
+then
+    install-extra
+fi
+
 system-cleanup
+system-reboot
