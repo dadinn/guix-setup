@@ -153,8 +153,6 @@ function install-extra {
 if [ -f debian-state ]
 then
     source debian-state
-else
-    echo '#!/bin/bash' > debian-state
 fi
 
 if [[ $SYSTEM_UPGRADE -lt 1 ]]
