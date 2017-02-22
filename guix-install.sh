@@ -3,7 +3,7 @@
 # TODO check if these commands are available:
 # gpg wget tar (with xz-utils)
 
-source guix-defaults.sh
+source ./guix-defaults
 
 function usage {
     cat <<EOF
