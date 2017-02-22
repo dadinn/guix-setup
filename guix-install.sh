@@ -121,32 +121,15 @@ then
     tar --warning=no-timestamp -xf $filename
 fi
 
-echo "Installing binaries under /gnu and /var/guix ..."
+echo "Installing binaries under /gnu and /var..."
 
-if [ -d /var ]
-then
-    for i in var/*
-    do
-	mv $i /var
-    done
-else
-    mv var /
-fi
-
-if [ -d /gnu ]
-then
-    for i in gnu/*
-    do
-	mv $i /gnu
-    done
-else
-    mv gnu /
-fi
+rsync -a --remove-source-files ./var/ /var
+rsync -a --remove-source-files ./gnu/ /gnu
 
 read -p "Clean up temporary files? [Y/n]" cleanup
 case $cleanup in
     [nN])
-	"Skipped cleaning up temporary files"
+	echo "Skipped cleaning up temporary files"
 	;;
     *)
 	echo "Cleaning up temporary files..."
