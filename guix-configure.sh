@@ -27,6 +27,7 @@ ln -sTf $root_profile /root/.guix-profile
 echo "Configuring PATH for all user profiles..."
 echo 'export PATH=$PATH:$HOME/.guix-profile/bin' > /etc/profile.d/guix
 echo 'export GUIX_LOCPATH=$HOME/.guix-profile/lib/locale' >> /etc/profile.d/guix
+source /etc/profile.d/guix
 
 echo "Setting up build group and users..."
 groupadd --system guixbuild
@@ -60,7 +61,6 @@ case $INIT in
 	guix-daemon --build-users-group guixbuild &
 esac
 
-source ~/.profile
 echo "Authorizing substitutes from hydra.gnu.org..."
 guix archive --authorize < $root_profile/share/guix/hydra.gnu.org.pub
 
