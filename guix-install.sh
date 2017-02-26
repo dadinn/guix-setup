@@ -84,18 +84,16 @@ then
     mkdir -p $TMP_DIR
 fi
 
-cd $TMP_DIR
-
 filename="guix-binary-$VERSION.$SYSTEM.tar.xz"
 
-if [[ ! -f $filename ]]
+if [[ ! -f $TMP_DIR/$filename ]]
 then
-    wget ftp://alpha.gnu.org/gnu/guix/$filename
+    wget -P $TMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename
 fi
 
-if [[ ! -f $filename.sig ]]
+if [[ ! -f $TMP_DIR/$filename.sig ]]
 then
-    wget ftp://alpha.gnu.org/gnu/guix/$filename.sig
+    wget -P $TMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename.sig
 fi
 
 if ! gpg --list-keys $KEYID
@@ -105,7 +103,7 @@ then
 fi
 
 echo "Verifying signature..."
-if gpg --verify $filename.sig
+if gpg --verify $TMP_DIR/$filename.sig
 then
     echo "Signature VERIFIED!"
 else
@@ -115,16 +113,8 @@ fi
 
 ### SETTING UP GUIX
 
-if [ ! -d $TMP_DIR/var/guix ] && [ ! -d $TMP_DIR/gnu ]
-then
-    echo "Extracting Guix binaries..."
-    tar --warning=no-timestamp -xf $filename
-fi
-
-echo "Installing binaries under /gnu and /var..."
-
-rsync -a --remove-source-files ./var/ /var
-rsync -a --remove-source-files ./gnu/ /gnu
+echo "Extracting and installing Guix binaries..."
+tar --warning=no-timestamp -x --file $TMP_DIR/$filename --directory /
 
 read -p "Clean up temporary files? [Y/n]" cleanup
 case $cleanup in
