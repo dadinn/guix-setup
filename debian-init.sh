@@ -140,7 +140,7 @@ function install-extra {
     case $extra in
 	[yY])
 	    echo "Installing extra packages..."
-	    apt install -y xz-utils
+	    apt install -y xz-utils info
 	    echo "Finished installing extra packages!"
 	    echo 'INSTALL_EXTRA=1' >> debian-state
 	    ;;
@@ -153,6 +153,8 @@ function install-extra {
 if [ -f debian-state ]
 then
     source ./debian-state
+else
+    echo '# Variable flags for continuing from where we left off' > ./debian-state
 fi
 
 if [[ $SYSTEM_UPGRADE -lt 1 ]]
