@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# TODO check if these commands are available:
-# gpg wget tar (with xz-utils)
-
-source ./guix-defaults
+VERSION=0.12.0
+SYSTEM=x86_64-linux
+KEYSERVER=pgp.mit.edu
+KEYID=BCA689B636553801C3C62150197A5888235FACAC
+ROOT_DIR=/
+TEMP_DIR=guix-downloads
 
 function usage {
     cat <<EOF
@@ -24,19 +26,14 @@ Valid values are: armhf-linux, mips64el-linux, i686-linux, x86_64-linux.
 keyserver URL to use for importing PGP keys (default gpg.mit.edu).
 -k KEYID
 Key id to use to fetch public PGP key (default ending 235FACAC).
--n NUMBER
-Number of Guix build users to create (default 10).
--i TYPE
-Init system to set up guix-daemon for (default systemd).
-Valid values are: systemd, upstart, manual.
 -r PATH
 Use PATH for target root directory (by default /).
 -t PATH
 Use PATH for downloaded temporary files (default /tmp/guix).
 EOF
 }
-       
-while getopts ':v:s:u:k:n:i:r:t:h' opt
+
+while getopts ':v:s:u:k:r:t:h' opt
 do
     case $opt in
 	v)
@@ -50,12 +47,6 @@ do
 	    ;;
 	k)
 	    KEYID=$OPTARG
-	    ;;
-	n)
-	    BUSERS=$OPTARG
-	    ;;
-	i)
-	    INIT=$OPTARG
 	    ;;
 	r)
 	    ROOT_DIR=$OPTARG

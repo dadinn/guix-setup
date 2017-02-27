@@ -1,6 +1,53 @@
 #!/bin/bash
 
-source ./guix-defaults
+BUSERS=10
+INIT=systemd
+
+function usage {
+    cat <<EOF
+Configure Guix installation
+
+USAGE:
+
+$0 OPTIONS...
+
+Valid options are:
+
+-n NUMBER
+Number of Guix build users to create (default 10).
+-i TYPE
+Init system to set up guix-daemon for (default systemd).
+Valid values are: systemd, upstart, manual.
+EOF
+}
+
+while getopts 'n:i:h' opt
+do
+    case $opt in
+	n)
+	    BUSERS=$OPTARG
+	    ;;
+	i)
+	    INIT=$OPTARG
+	    ;;
+	h)
+	    usage
+	    exit 0
+	    ;;
+	:)
+	    echo "MISSING ARGUMENT FOR OPTION: $OPTARG" >&2
+	    exit -1
+	    ;;
+	?)
+	    echo "INVALID OPTION: $OPTARG" >&2
+	    exit -1
+	    ;;
+	*)
+	    usage
+	    exit -1
+	    ;;
+    esac
+done
 
 ### GUIX CONFIGURATION
 
