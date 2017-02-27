@@ -29,12 +29,14 @@ Number of Guix build users to create (default 10).
 -i TYPE
 Init system to set up guix-daemon for (default systemd).
 Valid values are: systemd, upstart, manual.
+-r PATH
+Use PATH for target root directory (by default /).
 -t PATH
 Use PATH for downloaded temporary files (default /tmp/guix).
 EOF
 }
        
-while getopts ':v:s:u:k:n:i:th' opt
+while getopts ':v:s:u:k:n:i:r:t:h' opt
 do
     case $opt in
 	v)
@@ -55,8 +57,11 @@ do
 	i)
 	    INIT=$OPTARG
 	    ;;
+	r)
+	    ROOT_DIR=$OPTARG
+	    ;;
 	t)
-	    TMP_DIR=$OPTARG
+	    TEMP_DIR=$OPTARG
 	    ;;
 	h)
 	    usage
@@ -79,21 +84,21 @@ done
 
 ### DOWNLOADING GUIX BINARIES
 
-if [[ ! -d $TMP_DIR ]]
+if [[ ! -d $TEMP_DIR ]]
 then
-    mkdir -p $TMP_DIR
+    mkdir -p $TEMP_DIR
 fi
 
 filename="guix-binary-$VERSION.$SYSTEM.tar.xz"
 
-if [[ ! -f $TMP_DIR/$filename ]]
+if [[ ! -f $TEMP_DIR/$filename ]]
 then
-    wget -P $TMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename
+    wget -P $TEMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename
 fi
 
-if [[ ! -f $TMP_DIR/$filename.sig ]]
+if [[ ! -f $TEMP_DIR/$filename.sig ]]
 then
-    wget -P $TMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename.sig
+    wget -P $TEMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename.sig
 fi
 
 if ! gpg --list-keys $KEYID
@@ -103,7 +108,7 @@ then
 fi
 
 echo "Verifying signature..."
-if gpg --verify $TMP_DIR/$filename.sig
+if gpg --verify $TEMP_DIR/$filename.sig
 then
     echo "Signature VERIFIED!"
 else
@@ -113,8 +118,13 @@ fi
 
 ### SETTING UP GUIX
 
+if [[ ! -d $ROOT_DIR ]]
+then
+    mkdir -p $ROOT_DIR
+fi
+
 echo "Extracting and installing Guix binaries..."
-tar --warning=no-timestamp -x --file $TMP_DIR/$filename --directory /
+tar --warning=no-timestamp -x --file $TEMP_DIR/$filename --directory $ROOT_DIR
 
 read -p "Clean up temporary files? [Y/n]" cleanup
 case $cleanup in
@@ -123,7 +133,7 @@ case $cleanup in
 	;;
     *)
 	echo "Cleaning up temporary files..."
-	rm -rf $TMP_DIR
+	rm -rf $TEMP_DIR
 	;;
 esac
 
