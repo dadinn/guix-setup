@@ -48,9 +48,16 @@ function system-reboot {
 }
 
 function system-cleanup {
-    apt-get autoremove -y
-    apt-get autoclean -y
-    system-reboot
+    read -p "Clean up apt repository and unneeded packages? [Y/n]" cleanup
+    case $cleanup in
+	[nN])
+	    echo "Skipped cleaning up"
+	    ;;
+	*)
+	    apt-get autoremove -y
+	    apt-get autoclean -y
+	    ;;
+    esac
 }
 
 function install-grsec {
@@ -141,6 +148,7 @@ function install-extra {
 	[yY])
 	    echo "Installing extra packages..."
 	    apt install -y xz-utils info
+	    apt install -y gdisk cryptsetup
 	    echo "Finished installing extra packages!"
 	    echo 'INSTALL_EXTRA=1' >> debian-state
 	    ;;
@@ -193,3 +201,4 @@ then
 fi
 
 system-cleanup
+system-reboot
