@@ -26,7 +26,7 @@ function system-upgrade {
 	    apt update
 	    apt upgrade -y
 	    echo "Finished upgrading Debian system!"
-	    echo 'SYSTEM_UPGRADE=1' >> debian-state
+	    echo 'SYSTEM_UPGRADE=1' >> .debian-state
 	    ;;
 	*)
 	    echo "Skipping upgrading Debian system"
@@ -68,7 +68,7 @@ function install-grsec {
 	    sources-backports
 	    apt install -y -t jessie-backports linux-image-grsec-amd64
 	    echo "Finished installing grsecurity patched kernel!"
-	    echo 'INSTALL_GRSEC=1' >> debian-state
+	    echo 'INSTALL_GRSEC=1' >> .debian-state
 	    system-reboot
 	    ;;
 	*)
@@ -84,7 +84,7 @@ function install-samba {
 	    echo "Installing NFS / Samba packages..."
 	    apt install -y nfs-kernel-server samba
 	    echo "Finished installing NFS / Samba packages"
-	    echo 'INSTALL_SAMBA=1' >> debian-state
+	    echo 'INSTALL_SAMBA=1' >> .debian-state
 	    ;;
 	*)
 	    echo "Skipping NFS / Samba packages"
@@ -101,7 +101,7 @@ function install-zfs {
 	    apt install -y -t jessie-backports linux-headers-$(uname -r)
 	    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
 	    echo "Finished installing ZFS tools & kernel modules!"
-	    echo 'INSTALL_ZFS=1' >> debian-state
+	    echo 'INSTALL_ZFS=1' >> .debian-state
 	    system-reboot
 	    ;;
 	*)
@@ -117,7 +117,7 @@ function install-kvm {
 	    echo "Installing KVM..."
 	    apt install -y qemu-kvm libvirt-bin virtinst
 	    echo "Finished installing KVM!"
-	    echo 'INSTALL_KVM=1' >> debian-state
+	    echo 'INSTALL_KVM=1' >> .debian-state
 	    echo "Check that virtualization support is enabled in BIOS!"
 	    ;;
 	*)
@@ -134,7 +134,7 @@ function install-docker {
 	    sources-docker
 	    apt install -y docker-engine
 	    echo "Finished installing Docker!"
-	    echo 'INSTALL_DOCKER=1' >> debian-state
+	    echo 'INSTALL_DOCKER=1' >> .debian-state
 	    ;;
 	*)
 	    echo "Skipping Docker Engine"
@@ -150,7 +150,7 @@ function install-extra {
 	    apt install -y xz-utils info
 	    apt install -y gdisk cryptsetup
 	    echo "Finished installing extra packages!"
-	    echo 'INSTALL_EXTRA=1' >> debian-state
+	    echo 'INSTALL_EXTRA=1' >> .debian-state
 	    ;;
 	*)
 	    echo "Skipping extra packages"
@@ -158,11 +158,11 @@ function install-extra {
     esac
 }
 
-if [ -f debian-state ]
+if [ -f .debian-state ]
 then
-    source ./debian-state
+    source .debian-state
 else
-    echo '# Variable flags for continuing from where we left off' > ./debian-state
+    echo '# Variable flags for continuing from where we left off' > .debian-state
 fi
 
 if [[ $SYSTEM_UPGRADE -lt 1 ]]
