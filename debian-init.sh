@@ -19,6 +19,7 @@ function sources-docker {
 }
 
 function system-upgrade {
+    echo
     read -p "Upgrade the system? [y/N]" system_upgrade
     case $system_upgrade in
 	[yY])
@@ -35,6 +36,7 @@ function system-upgrade {
 }
 
 function system-reboot {
+    echo
     read -p "Reboot now? [Y/n]" system_reboot
     case $system_reboot in
 	[nN])
@@ -48,6 +50,7 @@ function system-reboot {
 }
 
 function system-cleanup {
+    echo
     read -p "Clean up apt repository and unneeded packages? [Y/n]" cleanup
     case $cleanup in
 	[nN])
@@ -61,6 +64,7 @@ function system-cleanup {
 }
 
 function install-grsec {
+    echo
     read -p "Install grsecurity kernel patches? [y/N]" grsec
     case $grsec in
 	[yY])
@@ -78,6 +82,7 @@ function install-grsec {
 }
 
 function install-samba {
+    echo
     read -p "Install NFS / Samba packages? [y/N]" install_samba
     case $install_samba in
 	[yY])
@@ -111,6 +116,7 @@ function install-zfs {
 }
 
 function install-kvm {
+    echo
     read -p "Install KVM? [y/N]" kvm
     case $kvm in
 	[yY])
@@ -127,6 +133,7 @@ function install-kvm {
 }
 
 function install-docker {
+    echo
     read -p "Install Docker? [y/N]" docker
     case $docker in
 	[yY])
@@ -143,6 +150,7 @@ function install-docker {
 }
 
 function install-extra {
+    echo
     read -p "Install extra packages? [y/N]" extra
     case $extra in
 	[yY])
