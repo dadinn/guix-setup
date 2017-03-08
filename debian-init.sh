@@ -170,7 +170,7 @@ if [ -f .debian-state ]
 then
     source .debian-state
 else
-    echo '# Variable flags for continuing from where we left off' > .debian-state
+    echo '# Variable flags for continuing from where debian-init left off' > .debian-state
 fi
 
 if [[ $SYSTEM_UPGRADE -lt 1 ]]
