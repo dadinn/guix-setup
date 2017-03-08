@@ -40,7 +40,8 @@ function system-reboot {
     read -p "Reboot now? [Y/n]" system_reboot
     case $system_reboot in
 	[nN])
-	    echo "Skipping reboot"
+	    echo "Skipping reboot. Exiting!"
+	    exit 0
 	    ;;
 	*)
 	    echo "Rebooting..."
