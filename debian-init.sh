@@ -156,7 +156,7 @@ function install-extra {
     case $extra in
 	[yY])
 	    echo "Installing extra packages..."
-	    apt install -y xz-utils info
+	    apt install -y wget tar xz-utils info
 	    apt install -y gdisk cryptsetup
 	    echo "Finished installing extra packages!"
 	    echo 'INSTALL_EXTRA=1' >> .debian-state
