@@ -1,6 +1,7 @@
 #!/bin/bash
 
 STATEFILE=.debian-state
+RELEASE=jessie
 
 function apt-init {
     cat >> /etc/apt/apt.conf <<EOF
@@ -13,7 +14,7 @@ EOF
 function sources-backports {
     if [ ! -f /etc/apt/sources.list.d/backports.list ]
     then
-	echo "deb http://ftp.uk.debian.org/debian jessie-backports main contrib" > /etc/apt/sources.list.d/backports.list
+	echo "deb http://ftp.uk.debian.org/debian $RELEASE-backports main contrib" > /etc/apt/sources.list.d/backports.list
 	apt update
     fi
 }
@@ -22,7 +23,7 @@ function sources-docker {
     if [ ! -f /etc/apt/sources.list.d/docker.list ]
     then
 	apt install -y apt-transport-https
-	echo "deb https://apt.dockerproject.org/repo debian-jessie main" > /etc/apt/sources.list.d/docker.list
+	echo "deb https://apt.dockerproject.org/repo debian-$RELEASE main" > /etc/apt/sources.list.d/docker.list
 	wget -O - "https://apt.dockerproject.org/gpg" | apt-key add -
 	apt update
     fi
@@ -81,7 +82,7 @@ function install-grsec {
 	[yY])
 	    echo "Installing grsecurity kernel patches..."
 	    sources-backports
-	    apt install -y -t jessie-backports linux-image-grsec-amd64
+	    apt install -y -t $RELEASE-backports linux-image-grsec-amd64
 	    echo "Finished installing grsecurity patched kernel!"
 	    echo 'INSTALL_GRSEC=1' >> $STATEFILE
 	    system-reboot
@@ -114,8 +115,8 @@ function install-zfs {
 	[yY])
 	    echo "Installing ZFS tools & kernel modules..."
 	    sources-backports
-	    apt install -y -t jessie-backports linux-headers-$(uname -r)
-	    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
+	    apt install -y -t $RELEASE-backports linux-headers-$(uname -r)
+	    apt install -y -t $RELEASE-backports zfs-dkms zfs-initramfs
 	    echo "Finished installing ZFS tools & kernel modules!"
 	    echo 'INSTALL_ZFS=1' >> $STATEFILE
 	    system-reboot
