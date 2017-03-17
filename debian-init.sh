@@ -1,5 +1,7 @@
 #!/bin/bash
 
+STATEFILE=.debian-state
+
 function sources-backports {
     if [ ! -f /etc/apt/sources.list.d/backports.list ]
     then
@@ -27,7 +29,7 @@ function system-upgrade {
 	    apt update
 	    apt upgrade -y
 	    echo "Finished upgrading Debian system!"
-	    echo 'SYSTEM_UPGRADE=1' >> .debian-state
+	    echo 'SYSTEM_UPGRADE=1' >> $STATEFILE
 	    ;;
 	*)
 	    echo "Skipping upgrading Debian system"
@@ -73,7 +75,7 @@ function install-grsec {
 	    sources-backports
 	    apt install -y -t jessie-backports linux-image-grsec-amd64
 	    echo "Finished installing grsecurity patched kernel!"
-	    echo 'INSTALL_GRSEC=1' >> .debian-state
+	    echo 'INSTALL_GRSEC=1' >> $STATEFILE
 	    system-reboot
 	    ;;
 	*)
@@ -90,7 +92,7 @@ function install-samba {
 	    echo "Installing NFS / Samba packages..."
 	    apt install -y nfs-kernel-server samba
 	    echo "Finished installing NFS / Samba packages"
-	    echo 'INSTALL_SAMBA=1' >> .debian-state
+	    echo 'INSTALL_SAMBA=1' >> $STATEFILE
 	    ;;
 	*)
 	    echo "Skipping NFS / Samba packages"
@@ -107,7 +109,7 @@ function install-zfs {
 	    apt install -y -t jessie-backports linux-headers-$(uname -r)
 	    apt install -y -t jessie-backports zfs-dkms zfs-initramfs
 	    echo "Finished installing ZFS tools & kernel modules!"
-	    echo 'INSTALL_ZFS=1' >> .debian-state
+	    echo 'INSTALL_ZFS=1' >> $STATEFILE
 	    system-reboot
 	    ;;
 	*)
@@ -124,7 +126,7 @@ function install-kvm {
 	    echo "Installing KVM..."
 	    apt install -y qemu-kvm libvirt-bin virtinst
 	    echo "Finished installing KVM!"
-	    echo 'INSTALL_KVM=1' >> .debian-state
+	    echo 'INSTALL_KVM=1' >> $STATEFILE
 	    echo "Check that virtualization support is enabled in BIOS!"
 	    ;;
 	*)
@@ -142,7 +144,7 @@ function install-docker {
 	    sources-docker
 	    apt install -y docker-engine
 	    echo "Finished installing Docker!"
-	    echo 'INSTALL_DOCKER=1' >> .debian-state
+	    echo 'INSTALL_DOCKER=1' >> $STATEFILE
 	    ;;
 	*)
 	    echo "Skipping Docker Engine"
@@ -159,7 +161,7 @@ function install-extra {
 	    apt install -y wget tar xz-utils info
 	    apt install -y gdisk cryptsetup
 	    echo "Finished installing extra packages!"
-	    echo 'INSTALL_EXTRA=1' >> .debian-state
+	    echo 'INSTALL_EXTRA=1' >> $STATEFILE
 	    ;;
 	*)
 	    echo "Skipping extra packages"
@@ -167,11 +169,11 @@ function install-extra {
     esac
 }
 
-if [ -f .debian-state ]
+if [ -f $STATEFILE ]
 then
-    source .debian-state
+    source $STATEFILE
 else
-    echo '# Variable flags for continuing from where debian-init left off' > .debian-state
+    echo '# Variable flags for debian-init state' > $STATEFILE
 fi
 
 if [[ $SYSTEM_UPGRADE -lt 1 ]]
