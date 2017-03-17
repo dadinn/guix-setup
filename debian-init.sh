@@ -2,6 +2,14 @@
 
 STATEFILE=.debian-state
 
+function apt-init {
+    cat >> /etc/apt/apt.conf <<EOF
+APT::Get::Install-Recommends "false";
+APT::Get::Install-Suggests "false";
+EOF
+    echo "APT_INIT=1" >> $STATEFILE
+}
+
 function sources-backports {
     if [ ! -f /etc/apt/sources.list.d/backports.list ]
     then
@@ -174,6 +182,11 @@ then
     source $STATEFILE
 else
     echo '# Variable flags for debian-init state' > $STATEFILE
+fi
+
+if [[ $APT_INIT -lt 1 ]]
+then
+    apt-init
 fi
 
 if [[ $SYSTEM_UPGRADE -lt 1 ]]
