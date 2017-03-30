@@ -89,6 +89,7 @@ function install-grsec {
 	    ;;
 	*)
 	    echo "Skipping grsecurity kernel patches"
+	    echo 'INSTALL_GRSEC=2' >> $STATEFILE
 	    ;;
     esac
 }
@@ -105,6 +106,7 @@ function install-samba {
 	    ;;
 	*)
 	    echo "Skipping NFS / Samba packages"
+	    echo 'INSTALL_SAMBA=2' >> $STATEFILE
 	    ;;
     esac
 }
@@ -123,6 +125,7 @@ function install-zfs {
 	    ;;
 	*)
 	    echo "Skipping ZFS tools & kernel modules"
+	    echo 'INSTALL_ZFS=2' >> $STATEFILE
 	    ;;
     esac
 }
@@ -140,6 +143,7 @@ function install-kvm {
 	    ;;
 	*)
 	    echo "Skipping KVM packages"
+	    echo 'INSTALL_KVM=2' >> $STATEFILE
 	    ;;
     esac
 }
@@ -157,6 +161,7 @@ function install-docker {
 	    ;;
 	*)
 	    echo "Skipping Docker Engine"
+	    echo 'INSTALL_DOCKER=2' >> $STATEFILE
 	    ;;
     esac
 }
@@ -174,9 +179,41 @@ function install-extra {
 	    ;;
 	*)
 	    echo "Skipping extra packages"
+	    echo 'INSTALL_EXTRA=2' >> $STATEFILE
 	    ;;
     esac
 }
+
+function usage {
+    cat <<EOF
+Initialize Debian system.
+
+USAGE:
+
+$0 [-N]
+
+With option -N, ask to redo previously ignored steps too.
+EOF
+}
+
+LEVEL=1
+
+while getopts "N" opt
+do
+    case $opt in
+	N)
+	    LEVEL=3
+	    ;;
+	?)
+	    echo "INVALID ARGUMENT: $OPTARG" >&2
+	    exit -1
+	    ;;
+	*)
+	    usage
+	    exit -1
+	    ;;
+    esac
+done
 
 if [ -f $STATEFILE ]
 then
@@ -185,42 +222,42 @@ else
     echo '# Variable flags for debian-init state' > $STATEFILE
 fi
 
-if [[ $APT_INIT -lt 1 ]]
+if [[ $APT_INIT -lt $LEVEL ]]
 then
     apt-init
 fi
 
-if [[ $SYSTEM_UPGRADE -lt 1 ]]
+if [[ $SYSTEM_UPGRADE -lt $LEVEL ]]
 then
     system-upgrade
 fi
 
-if [[ $INSTALL_GRSEC -lt 1 ]]
+if [[ $INSTALL_GRSEC -lt $LEVEL ]]
 then
     install-grsec
 fi
 
-if [[ $INSTALL_ZFS -lt 1 ]]
+if [[ $INSTALL_ZFS -lt $LEVEL ]]
 then
     install-zfs
 fi
 
-if [[ $INSTALL_SAMBA -lt 1 ]]
+if [[ $INSTALL_SAMBA -lt $LEVEL ]]
 then
     install-samba
 fi
 
-if [[ $INSTALL_KVM -lt 1 ]]
+if [[ $INSTALL_KVM -lt $LEVEL ]]
 then
     install-kvm
 fi
 
-if [[ $INSTALL_DOCKER -lt 1 ]]
+if [[ $INSTALL_DOCKER -lt $LEVEL ]]
 then
     install-docker
 fi
 
-if [[ $INSTALL_EXTRA -lt 1 ]]
+if [[ $INSTALL_EXTRA -lt $LEVEL ]]
 then
     install-extra
 fi
