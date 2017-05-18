@@ -5,7 +5,6 @@ INIT=systemd
 
 function usage {
     cat <<EOF
-Configure Guix installation
 
 USAGE:
 
@@ -14,9 +13,10 @@ $0 OPTIONS...
 Valid options are:
 
 -n NUMBER
-Number of Guix build users to create (default 10).
+Number of Guix build users to create (default $BUSERS).
+
 -i TYPE
-Init system to set up guix-daemon for (default systemd).
+Init system to set up guix-daemon for (default $INIT).
 Valid values are: systemd, upstart, manual.
 EOF
 }
@@ -28,9 +28,20 @@ do
 	    BUSERS=$OPTARG
 	    ;;
 	i)
-	    INIT=$OPTARG
+	    case $OPTARG in
+	        systemd|upstart|manual)
+	            INIT=$OPTARG
+	            ;;
+	        *)
+	            echo
+                    echo "ERROR: invalid argument for option -i: $OPTARG"
+	            usage
+	            error -1
+	            ;;
+	    esac
 	    ;;
 	h)
+	    echo "Configure Guix installation"
 	    usage
 	    exit 0
 	    ;;
