@@ -4,13 +4,11 @@ VERSION=0.12.0
 SYSTEM=x86_64-linux
 KEYSERVER=pgp.mit.edu
 KEYID=BCA689B636553801C3C62150197A5888235FACAC
-ROOT_DIR=/
+ROOT_DIR=guix-rootdir
 TEMP_DIR=guix-downloads
 
 function usage {
     cat <<EOF
-Set up the GNU Guix package manager on an existing Linux host system.
-
 USAGE:
 
 $0 OPTIONS...
@@ -18,18 +16,23 @@ $0 OPTIONS...
 Valid options are:
 
 -v VERSION
-Guix version to use (default 0.12.0).
--s SYSARCH
-Guix architecture and host system to use (default x86_64-linux).
+Guix version to use (default $VERSION).
+
+-s SYSTEM
+Guix architecture and host system to use (default $SYSTEM).
 Valid values are: armhf-linux, mips64el-linux, i686-linux, x86_64-linux.
+
 -u URL
-keyserver URL to use for importing PGP keys (default gpg.mit.edu).
+keyserver URL to use for importing PGP keys (default $KEYSERVER).
+
 -k KEYID
-Key id to use to fetch public PGP key (default ending 235FACAC).
+Key id to use to fetch public PGP key (default $KEYID).
+
 -r PATH
-Use PATH for target root directory (by default /).
+Use PATH for target root directory (by default $ROOT_DIR).
+
 -t PATH
-Use PATH for downloaded temporary files (default /tmp/guix).
+Use PATH for downloaded temporary files (default $TEMP_DIR).
 EOF
 }
 
@@ -40,7 +43,17 @@ do
 	    VERSION=$OPTARG
 	    ;;
 	s)
-	    SYSTEM=$OPTARG
+	    case $OPTARG in
+                x86_64-linux|i686-linux|mips64el-linux|armhf-linux)
+                    SYSTEM=$OPTARG
+                    ;;
+                *)
+                    echo "ERROR: Wrong argument for option -s: $OPTARG"
+                    echo
+                    usage
+                    exit -1
+                    ;;
+            esac
 	    ;;
 	u)
 	    KEYSERVER=$OPTARG
@@ -55,8 +68,10 @@ do
 	    TEMP_DIR=$OPTARG
 	    ;;
 	h)
-	    usage
-	    exit 0
+            echo Set up the GNU Guix package manager on an existing Linux host system.
+            echo
+            usage
+            exit 0
 	    ;;
 	:)
 	    echo "MISSING ARGUMENT FOR OPTION: $OPTARG" >&2
