@@ -23,10 +23,10 @@ Guix architecture and host system to use (default $SYSTEM).
 Valid values are: armhf-linux, mips64el-linux, i686-linux, x86_64-linux.
 
 -u URL
-keyserver URL to use for importing PGP keys (default $KEYSERVER).
+keyserver URL to use for importing GPG keys (default $KEYSERVER).
 
 -k KEYID
-Key id to use to fetch public PGP key (default $KEYID).
+Key id to use to fetch public GPG key (default $KEYID).
 
 -r PATH
 Use PATH for target root directory (by default $ROOT_DIR).
@@ -109,7 +109,7 @@ fi
 
 if ! gpg --list-keys $KEYID
 then
-    echo Fetching PGP key...
+    echo Fetching GPG key...
     gpg --keyserver $KEYSERVER --recv-keys $KEYID
 fi
 
