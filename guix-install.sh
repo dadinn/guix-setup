@@ -33,10 +33,17 @@ Use PATH for target root directory (by default $ROOT_DIR).
 
 -t PATH
 Use PATH for downloaded temporary files (default $TEMP_DIR).
+
+-f
+Force installation even if signature cannot be verified
+
+-h
+This usage help...
+
 EOF
 }
 
-while getopts ':v:s:u:k:r:t:h' opt
+while getopts ':v:s:u:k:r:t:fh' opt
 do
     case $opt in
 	v)
@@ -66,6 +73,9 @@ do
 	    ;;
 	t)
 	    TEMP_DIR=$OPTARG
+	    ;;
+	f)
+	    FORCE=1
 	    ;;
 	h)
             echo Set up the GNU Guix package manager on an existing Linux host system.
@@ -119,7 +129,7 @@ then
     echo "Signature VERIFIED!"
 else
     echo "Signature CANNOT BE VERIFIED!"
-    exit -1
+    [ ${FORCE:-0} -gt 0 ] || exit -1
 fi
 
 ### SETTING UP GUIX
