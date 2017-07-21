@@ -98,11 +98,7 @@ echo "Setting up guix-daemon..."
 case $INIT in
     systemd)
 	echo "Setting up systemd service..."
-	if [ -f /etc/systemd/system/guix-daemon.service ]
-	then
-	    rm /etc/systemd/system/guix-daemon.service
-	fi
-	ln -s /root/.guix-profile/lib/systemd/system/guix-daemon.service /etc/systemd/system/
+	ln -sf /root/.guix-profile/lib/systemd/system/guix-daemon.service /etc/systemd/system/
 	systemctl start guix-daemon && systemctl enable guix-daemon
 	;;
     upstart)
