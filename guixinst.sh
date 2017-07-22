@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 VERSION=0.13.0
 SYSTEM=x86_64-linux
@@ -7,7 +7,7 @@ KEYID=3CE464558A84FDC69DB40CFB090B11993D9AEBB5
 ROOT_DIR=guix-rootdir
 TEMP_DIR=guix-downloads
 
-function usage {
+usage() {
     cat <<EOF
 USAGE:
 

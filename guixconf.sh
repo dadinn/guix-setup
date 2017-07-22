@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 
 BUSERS=10
 INIT=systemd
 
-function usage {
+usage() {
     cat <<EOF
 
 USAGE:
