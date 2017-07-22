@@ -1,7 +1,7 @@
 #!/bin/sh
 
 VERSION=0.13.0
-SYSTEM=x86_64-linux
+ARCH=x86_64-linux
 KEYSERVER=pgp.mit.edu
 KEYID=3CE464558A84FDC69DB40CFB090B11993D9AEBB5
 ROOT_DIR=guix-rootdir
@@ -18,8 +18,8 @@ Valid options are:
 -v VERSION
 Guix version to use (default $VERSION).
 
--s SYSTEM
-Guix architecture and host system to use (default $SYSTEM).
+-a ARCH
+Guix architecture of host system to use (default $ARCH).
 Valid values are: armhf-linux, mips64el-linux, i686-linux, x86_64-linux.
 
 -u URL
@@ -43,16 +43,16 @@ This usage help...
 EOF
 }
 
-while getopts ':v:s:u:k:r:t:fh' opt
+while getopts ':v:a:u:k:r:t:fh' opt
 do
     case $opt in
 	v)
 	    VERSION=$OPTARG
 	    ;;
-	s)
+	a)
 	    case $OPTARG in
                 x86_64-linux|i686-linux|mips64el-linux|armhf-linux)
-                    SYSTEM=$OPTARG
+                    ARCH=$OPTARG
                     ;;
                 *)
                     echo "ERROR: Wrong argument for option -s: $OPTARG"
@@ -105,7 +105,7 @@ then
     mkdir -p $TEMP_DIR
 fi
 
-filename="guix-binary-$VERSION.$SYSTEM.tar.xz"
+filename="guix-binary-$VERSION.$ARCH.tar.xz"
 
 if [[ ! -f $TEMP_DIR/$filename ]]
 then
@@ -152,5 +152,3 @@ case $cleanup in
 	rm -rf $TEMP_DIR
 	;;
 esac
-
-
