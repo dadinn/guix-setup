@@ -113,6 +113,7 @@ case $INIT in
     manual)
 	echo "Starting guix-daemon in background process"
 	guix-daemon --build-users-group guixbuild &
+	;;
 esac
 
 echo "Authorizing substitutes from hydra.gnu.org..."
