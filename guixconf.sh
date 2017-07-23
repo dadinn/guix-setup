@@ -120,5 +120,9 @@ esac
 echo "Authorizing substitutes from hydra.gnu.org..."
 guix archive --authorize < $root_profile/share/guix/hydra.gnu.org.pub
 
+echo "Updating GUIX packages..."
+guix pull
+guix package -u
+
 echo "Installing glibc locales..."
 guix package -i glibc-utf8-locales
