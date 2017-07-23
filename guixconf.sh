@@ -68,24 +68,21 @@ echo "Adding info pages..."
 
 if [ ! -d /usr/local/share/info ]
 then
-    mkdir /usr/local/share/info
+    mkdir -p /usr/local/share/info
 fi
 
 for i in $root_profile/share/info/*
 do
-    if [ ! -L /usr/local/share/info/$(basename $i) ]
-    then
-	ln -s $i /usr/local/share/info/
-    fi
+    ln -sf $i /usr/local/share/info/
 done
 
-echo "Configuring PATH for root user..."
+echo "Setting up profile for root user..."
 ln -sTf $root_profile /root/.guix-profile
 
-echo "Configuring PATH for all user profiles..."
-echo 'export PATH=$PATH:$HOME/.guix-profile/bin' > /etc/profile.d/guix
-echo 'export GUIX_LOCPATH=$HOME/.guix-profile/lib/locale' >> /etc/profile.d/guix
-source /etc/profile.d/guix
+echo "Configuring PATH with GUIX user profiles..."
+echo 'export PATH=$PATH:$HOME/.guix-profile/bin' > /etc/profile.d/guix.sh
+echo 'export GUIX_LOCPATH=$HOME/.guix-profile/lib/locale' >> /etc/profile.d/guix.sh
+source /etc/profile.d/guix.sh
 
 echo "Setting up build group and users..."
 groupadd --system guixbuild
