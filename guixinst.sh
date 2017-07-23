@@ -100,19 +100,19 @@ done
 
 ### DOWNLOADING GUIX BINARIES
 
-if [[ ! -d $TEMP_DIR ]]
+if [ ! -d $TEMP_DIR ]
 then
     mkdir -p $TEMP_DIR
 fi
 
 filename="guix-binary-$VERSION.$ARCH.tar.xz"
 
-if [[ ! -f $TEMP_DIR/$filename ]]
+if [ ! -f $TEMP_DIR/$filename ]
 then
     wget -P $TEMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename
 fi
 
-if [[ ! -f $TEMP_DIR/$filename.sig ]]
+if [ ! -f $TEMP_DIR/$filename.sig ]
 then
     wget -P $TEMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename.sig
 fi
@@ -129,12 +129,12 @@ then
     echo "Signature VERIFIED!"
 else
     echo "Signature CANNOT BE VERIFIED!"
-    [ ${FORCE:-0} -gt 0 ] || exit -1
+    [ ${FORCE:-0} -gt 0 ] || exit 1
 fi
 
 ### SETTING UP GUIX
 
-if [[ ! -d $ROOT_DIR ]]
+if [ ! -d $ROOT_DIR ]
 then
     mkdir -p $ROOT_DIR
 fi

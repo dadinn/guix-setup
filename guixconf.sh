@@ -82,7 +82,7 @@ ln -sTf $root_profile /root/.guix-profile
 echo "Configuring PATH with GUIX user profiles..."
 echo 'export PATH=$PATH:$HOME/.guix-profile/bin' > /etc/profile.d/guix.sh
 echo 'export GUIX_LOCPATH=$HOME/.guix-profile/lib/locale' >> /etc/profile.d/guix.sh
-source /etc/profile.d/guix.sh
+. /etc/profile.d/guix.sh
 
 echo "Setting up build group and users..."
 groupadd --system guixbuild
