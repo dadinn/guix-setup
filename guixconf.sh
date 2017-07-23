@@ -17,7 +17,7 @@ Number of Guix build users to create (default $BUSERS).
 
 -i TYPE
 Init system to set up guix-daemon for (default $INIT).
-Valid values are: systemd, upstart, manual.
+Valid values are: systemd, upstart.
 EOF
 }
 
@@ -110,7 +110,7 @@ case $INIT in
 	ln -s /root/.guix-profile/lib/upstart/system/guix-daemon.conf /etc/init/
 	start guix-daemon
 	;;
-    manual)
+    *)
 	echo "Starting guix-daemon in background process"
 	guix-daemon --build-users-group guixbuild &
 	;;
