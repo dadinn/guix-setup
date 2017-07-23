@@ -4,8 +4,8 @@ VERSION=0.13.0
 ARCH=x86_64-linux
 KEYSERVER=pgp.mit.edu
 KEYID=3CE464558A84FDC69DB40CFB090B11993D9AEBB5
-ROOT_DIR=guix-rootdir
 TEMP_DIR=guix-downloads
+ROOT_DIR=/
 
 usage() {
     cat <<EOF
@@ -117,14 +117,14 @@ then
     wget -P $TEMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename.sig
 fi
 
-if ! gpg --list-keys $KEYID
+if ! gpg --list-keys $KEYID 2> /dev/null
 then
     echo Fetching GPG key...
-    gpg --keyserver $KEYSERVER --recv-keys $KEYID
+    gpg --keyserver $KEYSERVER --recv-keys $KEYID 2> /dev/null
 fi
 
 echo "Verifying signature..."
-if gpg --verify $TEMP_DIR/$filename.sig
+if gpg --verify $TEMP_DIR/$filename.sig 2> /dev/null
 then
     echo "Signature VERIFIED!"
 else
@@ -141,6 +141,8 @@ fi
 
 echo "Extracting and installing Guix binaries..."
 tar --warning=no-timestamp -x --file $TEMP_DIR/$filename --directory $ROOT_DIR
+
+./guixconf.sh
 
 read -p "Clean up temporary files? [Y/n]" cleanup
 case $cleanup in
