@@ -80,8 +80,12 @@ echo "Setting up profile for root user..."
 ln -sTf $root_profile /root/.guix-profile
 
 echo "Configuring PATH with GUIX user profiles..."
-echo 'export PATH=$PATH:$HOME/.guix-profile/bin' > /etc/profile.d/guix.sh
-echo 'export GUIX_LOCPATH=$HOME/.guix-profile/lib/locale' >> /etc/profile.d/guix.sh
+cat > /etc/profile.d/guix.sh << 'EOF'
+export GUIX_PROFILE=$HOME/.guix-profile
+export GUIX_LOCPATH=$GUIX_PROFILE/lib/locale
+export PATH=$GUIX_PROFILE/bin${PATH:+:}$PATH
+EOF
+
 . /etc/profile.d/guix.sh
 
 echo "Setting up build group and users..."
