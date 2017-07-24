@@ -100,7 +100,8 @@ case $INIT in
     systemd)
 	echo "Setting up systemd service..."
 	ln -sf /root/.guix-profile/lib/systemd/system/guix-daemon.service /etc/systemd/system/
-	systemctl enable guix-daemon && systemctl start guix-daemon
+	systemctl enable guix-daemon
+	systemctl start guix-daemon
 	;;
     upstart)
 	echo "Setting up upstart service..."
@@ -120,8 +121,10 @@ esac
 echo "Authorizing substitutes from hydra.gnu.org..."
 guix archive --authorize < $root_profile/share/guix/hydra.gnu.org.pub
 
-echo "Updating GUIX packages..."
+echo "Updating GUIX binaries..."
 guix pull
+
+echo "Updating GUIX packages..."
 guix package -u
 
 echo "Installing glibc locales..."

@@ -4,8 +4,8 @@ VERSION=0.13.0
 ARCH=x86_64-linux
 KEYSERVER=pgp.mit.edu
 KEYID=3CE464558A84FDC69DB40CFB090B11993D9AEBB5
-TEMP_DIR=guix-downloads
-ROOT_DIR=/
+TEMP_DIR=guix-temp
+ROOT_DIR=guix-root
 
 usage() {
     cat <<EOF
