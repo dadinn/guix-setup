@@ -142,13 +142,13 @@ fi
 echo "Extracting and installing Guix binaries..."
 tar --warning=no-timestamp -x --file $TEMP_DIR/$filename --directory $ROOT_DIR
 
-read -p "Clean up temporary files? [Y/n]" cleanup
+read -p "Clean up temporary files? [y/N]" cleanup
 case $cleanup in
-    [nN])
-	echo "Skipped cleaning up temporary files"
-	;;
-    *)
+    [yY])
 	echo "Cleaning up temporary files..."
 	rm -rf $TEMP_DIR
+	;;
+    *)
+	echo "Skipped cleaning up temporary files"
 	;;
 esac
