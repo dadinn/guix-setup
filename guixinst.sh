@@ -90,6 +90,8 @@ do
     esac
 done
 
+[ $(id -u) -eq 0 ] || { echo "This script must be run as root."; exit 1; }
+
 ### DOWNLOADING GUIX BINARIES
 
 if [ ! -d $TEMP_DIR ]
