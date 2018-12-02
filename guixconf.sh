@@ -45,14 +45,6 @@ do
 	    usage
 	    exit 0
 	    ;;
-	:)
-	    echo "MISSING ARGUMENT FOR OPTION: $OPTARG" >&2
-	    exit -1
-	    ;;
-	?)
-	    echo "INVALID OPTION: $OPTARG" >&2
-	    exit -1
-	    ;;
 	*)
 	    usage
 	    exit -1
