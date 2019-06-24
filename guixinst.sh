@@ -103,12 +103,12 @@ filename="guix-binary-$VERSION.$ARCH.tar.xz"
 
 if [ ! -f $TEMP_DIR/$filename ]
 then
-    wget -P $TEMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename
+    wget -P $TEMP_DIR ftp://ftp.gnu.org/gnu/guix/$filename
 fi
 
 if [ ! -f $TEMP_DIR/$filename.sig ]
 then
-    wget -P $TEMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename.sig
+    wget -P $TEMP_DIR ftp://ftp.gnu.org/gnu/guix/$filename.sig
 fi
 
 if ! gpg --list-keys $KEYID 2> /dev/null
