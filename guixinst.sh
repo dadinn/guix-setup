@@ -113,8 +113,11 @@ fi
 
 if ! gpg --list-keys $KEYID 2> /dev/null
 then
-    echo Fetching GPG key...
-    gpg --keyserver $KEYSERVER --recv-keys $KEYID 2> /dev/null
+    if [ ${FORCE:-0} -eq 0 ]
+    then
+	echo Fetching GPG key...
+	gpg --keyserver $KEYSERVER --recv-keys $KEYID 2> /dev/null
+    fi
 fi
 
 echo "Verifying signature..."
