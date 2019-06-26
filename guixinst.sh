@@ -139,6 +139,10 @@ fi
 echo "Extracting and installing Guix binaries..."
 tar --warning=no-timestamp -x --file $TEMP_DIR/$filename --directory $ROOT_DIR
 
+
+cp ./guixconf.sh $ROOT_DIR
+echo "Copied configuration script under $ROOT_DIR"
+
 read -p "Clean up temporary files? [y/N]" cleanup
 case $cleanup in
     [yY])
