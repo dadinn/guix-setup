@@ -57,15 +57,15 @@ done
 root_profile=/var/guix/profiles/per-user/root/guix-profile
 
 echo "Adding info pages..."
-
-if [ ! -d /usr/local/share/info ]
+INFO_DIR="/usr/local/share/info"
+if [ ! -d $INFO_DIR ]
 then
-    mkdir -p /usr/local/share/info
+    mkdir -p $INFO_DIR
 fi
 
 for i in $root_profile/share/info/*
 do
-    ln -sf $i /usr/local/share/info/
+    ln -sf $i $INFO_DIR
 done
 
 echo "Setting up profile for root user..."
