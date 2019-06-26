@@ -54,31 +54,30 @@ done
 
 ### GUIX CONFIGURATION
 
-root_profile=/var/guix/profiles/per-user/root/guix-profile
+GUIX_PROFILE=/var/guix/profiles/per-user/root/current-guix
 
 echo "Adding info pages..."
-
-if [ ! -d /usr/local/share/info ]
+INFO_DIR="/usr/local/share/info"
+if [ ! -d $INFO_DIR ]
 then
-    mkdir -p /usr/local/share/info
+    mkdir -p $INFO_DIR
 fi
 
-for i in $root_profile/share/info/*
+for i in $GUIX_PROFILE/share/info/*
 do
-    ln -sf $i /usr/local/share/info/
+    ln -sf $i $INFO_DIR
 done
 
-echo "Setting up profile for root user..."
-ln -sTf $root_profile /root/.guix-profile
+. $GUIX_PROFILE/etc/profile
+
 
 echo "Configuring PATH with GUIX user profiles..."
 cat > /etc/profile.d/guix.sh << 'EOF'
 export GUIX_PROFILE=$HOME/.guix-profile
 export GUIX_LOCPATH=$GUIX_PROFILE/lib/locale
-export PATH=$GUIX_PROFILE/bin${PATH:+:}$PATH
+export PATH=$HOME/.config/guix/current/bin${PATH:+:}$PATH
+. $GUIX_PROFILE/etc/profile
 EOF
-
-. /etc/profile.d/guix.sh
 
 echo "Setting up build group and users..."
 groupadd --system guixbuild
@@ -90,28 +89,27 @@ done
 echo "Setting up guix-daemon..."
 case $INIT in
     systemd)
-	echo "Setting up systemd service..."
-	ln -sf /root/.guix-profile/lib/systemd/system/guix-daemon.service /etc/systemd/system/
+	cp $GUIX_PROFILE/lib/systemd/system/guix-daemon.service /etc/systemd/system/
 	systemctl enable guix-daemon
 	systemctl start guix-daemon
+	echo "Configured systemd service!"
 	;;
     upstart)
-	echo "Setting up upstart service..."
-	if [ -f /etc/init/guix-daemon.conf ]
-	then
-	    rm /etc/init/guix-daemon.conf
-	fi
-	ln -s /root/.guix-profile/lib/upstart/system/guix-daemon.conf /etc/init/
+	cp $GUIX_PROFILE/lib/upstart/system/guix-daemon.conf /etc/init/
 	start guix-daemon
+	echo "Configured upstart service!"
 	;;
     *)
-	echo "Starting guix-daemon in background process"
-	guix-daemon --build-users-group guixbuild &
+	$GUIX_PROFILE/guix-daemon --build-users-group guixbuild &
+	echo "Started guix-daemon background process!"
 	;;
 esac
 
+echo "Making guix command available to all users..."
+ln -sf $GUIX_PROFILE/bin/guix /usr/local/bin/
+
 echo "Authorizing substitutes from hydra.gnu.org..."
-guix archive --authorize < $root_profile/share/guix/hydra.gnu.org.pub
+guix archive --authorize < $GUIX_PROFILE/share/guix/ci.guix.gnu.org.pub
 
 echo "Updating GUIX binaries..."
 guix pull
@@ -119,5 +117,5 @@ guix pull
 echo "Updating GUIX packages..."
 guix package -u
 
-echo "Installing glibc locales..."
+echo "Installing glibc UTF-8 locales..."
 guix package -i glibc-utf8-locales

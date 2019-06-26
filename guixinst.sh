@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION=0.14.0
+VERSION=1.0.1
 ARCH=x86_64-linux
 KEYSERVER=pgp.mit.edu
 KEYID=3CE464558A84FDC69DB40CFB090B11993D9AEBB5
@@ -103,12 +103,12 @@ filename="guix-binary-$VERSION.$ARCH.tar.xz"
 
 if [ ! -f $TEMP_DIR/$filename ]
 then
-    wget -P $TEMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename
+    wget -P $TEMP_DIR ftp://ftp.gnu.org/gnu/guix/$filename
 fi
 
 if [ ! -f $TEMP_DIR/$filename.sig ]
 then
-    wget -P $TEMP_DIR ftp://alpha.gnu.org/gnu/guix/$filename.sig
+    wget -P $TEMP_DIR ftp://ftp.gnu.org/gnu/guix/$filename.sig
 fi
 
 if ! gpg --list-keys $KEYID 2> /dev/null
@@ -138,6 +138,10 @@ fi
 
 echo "Extracting and installing Guix binaries..."
 tar --warning=no-timestamp -x --file $TEMP_DIR/$filename --directory $ROOT_DIR
+
+
+cp ./guixconf.sh $ROOT_DIR
+echo "Copied configuration script under $ROOT_DIR"
 
 read -p "Clean up temporary files? [y/N]" cleanup
 case $cleanup in
