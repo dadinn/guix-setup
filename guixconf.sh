@@ -92,16 +92,16 @@ case $INIT in
 	cp $GUIX_PROFILE/lib/systemd/system/guix-daemon.service /etc/systemd/system/
 	systemctl enable guix-daemon
 	systemctl start guix-daemon
-	echo "...configured systemd service!"
+	echo "Configured systemd service!"
 	;;
     upstart)
 	cp $GUIX_PROFILE/lib/upstart/system/guix-daemon.conf /etc/init/
 	start guix-daemon
-	echo "...configured upstart service!"
+	echo "Configured upstart service!"
 	;;
     *)
 	$GUIX_PROFILE/guix-daemon --build-users-group guixbuild &
-	echo "...started guix-daemon process"
+	echo "Started guix-daemon background process!"
 	;;
 esac
 
@@ -117,5 +117,5 @@ guix pull
 echo "Updating GUIX packages..."
 guix package -u
 
-echo "Installing glibc locales..."
+echo "Installing glibc UTF-8 locales..."
 guix package -i glibc-utf8-locales
